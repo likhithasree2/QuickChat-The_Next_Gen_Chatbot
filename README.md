@@ -1,6 +1,6 @@
-# Modern Chatbot Project
+## Modern Chatbot Project
 
-This is a simple modern chatbot project that allows users to interact with a chat interface, toggle dark mode, send messages, upload images.
+This is a simple modern chatbot project that allows users to interact with a chat interface, toggle dark mode, send messages, and upload images.
 
 ## Features
 

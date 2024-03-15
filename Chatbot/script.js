@@ -1,20 +1,19 @@
 let recognition;
 let isRecording = false;
+let speechSynthesisInstance = window.speechSynthesis;
 
 function toggleDarkMode() {
   const body = document.body;
   body.classList.toggle("dark-mode");
 
-  // Toggle between sun and moon icons
   const darkModeIcon = document.getElementById("dark-mode-icon");
   darkModeIcon.classList.toggle("fa-sun");
   darkModeIcon.classList.toggle("fa-moon");
 
-  // Adjust icon color for dark mode
   if (body.classList.contains("dark-mode")) {
-    darkModeIcon.style.color = "#ffffff"; // Set moon icon color to white
+    darkModeIcon.style.color = "#ffffff"; 
   } else {
-    darkModeIcon.style.color = ""; // Reset moon icon color to default
+    darkModeIcon.style.color = ""; 
   }
 }
 
@@ -76,7 +75,6 @@ function sendMessage() {
   if (userInput.trim() === "") return;
 
   appendMessage("user", userInput);
-  // Call Wikipedia search function
   searchWikipedia(userInput);
 
   document.getElementById("user-input").value = "";
@@ -87,25 +85,64 @@ function appendMessage(sender, message) {
   var messageElement = document.createElement("div");
   messageElement.classList.add(sender);
   messageElement.innerHTML = message;
+
+  if (sender === "bot") {
+    var readoutButton = document.createElement("button");
+    readoutButton.innerHTML = '<i class="fas fa-volume-up"></i>';
+    readoutButton.classList.add("readout-button");
+    readoutButton.onclick = function() {
+        toggleReadOutLoud(message);
+    };
+    messageElement.appendChild(readoutButton);
+  }
+
+  if (sender === "user") {
+    var editPromptButton = document.createElement("button");
+    editPromptButton.innerHTML = '<i class="fas fa-edit"></i>';
+    editPromptButton.classList.add("edit-prompt-button");
+    var userIcon = document.createElement("div");
+    userIcon.classList.add("icon-circle");
+    userIcon.innerHTML = '<i class="fas fa-user"></i>';
+    messageElement.insertBefore(userIcon, messageElement.firstChild);
+    editPromptButton.onclick = function() {
+        editPrompt(message);
+    };
+    messageElement.appendChild(editPromptButton);
+  }
+
+  if (sender === "bot") {
+    var copyButton = document.createElement("button");
+    copyButton.innerHTML = '<i class="far fa-copy"></i>';
+    copyButton.classList.add("copy-button");
+    var botIcon = document.createElement("div");
+    botIcon.classList.add("icon-circle");
+    botIcon.innerHTML = '<i class="fas fa-robot"></i>';
+    messageElement.insertBefore(botIcon, messageElement.firstChild);
+    copyButton.onclick = function() {
+        copyToClipboard(message);
+    };
+    messageElement.appendChild(copyButton);
+  }
+
   chatContainer.appendChild(messageElement);
 
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 function searchWikipedia(query) {
-  const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&list=search&srsearch=${query}&origin=*`;
+  const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro&explaintext&redirects=1&titles=${query}&origin=*`;
 
   fetch(url)
     .then(response => response.json())
     .then(data => {
-      // Check if there are any search results
-      if (data.query && data.query.search) {
-        const searchResults = data.query.search;
-        // Get the first search result snippet and title
-        if (searchResults.length > 0) {
-          const snippet = searchResults[0].snippet;
-          const title = searchResults[0].title;
-          const resultMessage = `${snippet}... <a href="https://en.wikipedia.org/wiki/${title}" target="_blank">Read more on Wikipedia</a>`;
+      if (data.query && data.query.pages) {
+        const pages = data.query.pages;
+        const pageIds = Object.keys(pages);
+        if (pageIds.length > 0) {
+          const pageId = pageIds[0];
+          const pageData = pages[pageId];
+          const snippet = pageData.extract;
+          const resultMessage = `${snippet}... <a href="https://en.wikipedia.org/wiki/${query}" target="_blank">Read more on Wikipedia</a>`;
           appendMessage("bot", resultMessage);
         } else {
           appendMessage("bot", "No results found on Wikipedia.");
@@ -117,5 +154,34 @@ function searchWikipedia(query) {
     .catch(error => {
       console.error("Error fetching Wikipedia search results:", error);
       appendMessage("bot", "Failed to retrieve Wikipedia search results.");
+    });
+}
+
+let isReading = false;
+let currentUtterance = null;
+
+function toggleReadOutLoud(message) {
+  if (!isReading) {
+    currentUtterance = new SpeechSynthesisUtterance();
+    currentUtterance.text = message;
+    speechSynthesisInstance.speak(currentUtterance);
+    isReading = true;
+  } else {
+    speechSynthesisInstance.cancel();
+    isReading = false;
+  }
+}
+
+function editPrompt(message) {
+  document.getElementById("user-input").value = message;
+}
+
+function copyToClipboard(message) {
+  navigator.clipboard.writeText(message)
+    .then(() => {
+      console.log('Bot response copied to clipboard.');
+    })
+    .catch(err => {
+      console.error('Failed to copy bot response: ', err);
     });
 }

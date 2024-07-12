@@ -1,7 +1,13 @@
+// Global variables for voice recognition and speech synthesis
 let recognition;
 let isRecording = false;
 let speechSynthesisInstance = window.speechSynthesis;
 
+// Global variables for tracking image loading
+let currentObject = null;
+let currentPage = 1;
+
+// Function to toggle dark mode
 function toggleDarkMode() {
   const body = document.body;
   body.classList.toggle("dark-mode");
@@ -17,6 +23,7 @@ function toggleDarkMode() {
   }
 }
 
+// Function to start voice recognition
 function startVoiceRecognition() {
   if (!isRecording) {
     if ("webkitSpeechRecognition" in window) {
@@ -49,6 +56,7 @@ function startVoiceRecognition() {
   }
 }
 
+// Function to open file explorer for image upload
 function openFileExplorer() {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
@@ -57,6 +65,7 @@ function openFileExplorer() {
   fileInput.click();
 }
 
+// Function to handle selected file for image upload
 function handleFileSelection(event) {
   const fileInput = event.target;
   const selectedFile = fileInput.files[0];
@@ -70,56 +79,118 @@ function handleFileSelection(event) {
   }
 }
 
+// Function to send user message and process input
 function sendMessage() {
   var userInput = document.getElementById("user-input").value;
   if (userInput.trim() === "") return;
 
   appendMessage("user", userInput);
-  searchWikipedia(userInput);
+
+  // Check if user requested object photos
+  const regex = /(.*?)\s+(photos|images)/i;
+  const match = userInput.match(regex);
+  if (match && match.length > 1) {
+    const object = match[1]; // Extract object name
+    generateObjectImages(object);
+  } else {
+    searchWikipedia(userInput);
+  }
 
   document.getElementById("user-input").value = "";
 }
 
+// Function to generate object images using Unsplash API
+function generateObjectImages(object) {
+  const accessKey = "_cTll8sRIYBo5bYfr52ktD9HpOYRpsXoKE4_5yZRzbg";
+  const chatContainer = document.getElementById("chat");
+
+  // Reset currentObject and currentPage if object changes
+  if (currentObject !== object) {
+    currentObject = object;
+    currentPage = 1;
+  }
+
+  const url = `https://api.unsplash.com/search/photos?page=${currentPage}&query=${object}&client_id=${accessKey}&per_page=4`;
+
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      if (data.results.length > 0) {
+        const results = data.results;
+        let imagesHTML = '<div class="bot">';
+        imagesHTML += `<h3>${object.charAt(0).toUpperCase() + object.slice(1)} Images</h3><div class="image-grid">`;
+
+        results.forEach(result => {
+          imagesHTML += `<div><img src="${result.urls.small}" alt="${object}-image" class="uploaded-image"></div>`;
+        });
+
+        // Add Load More button if there are more pages
+        if (data.total_pages > currentPage) {
+          imagesHTML += `<button class="load-more-button" onclick="loadMoreImages('${object}')">Load More</button>`;
+        }
+
+        imagesHTML += '</div></div>';
+
+        appendMessage("bot", imagesHTML);
+      } else {
+        appendMessage("bot", `No ${object} images found.`);
+      }
+    })
+    .catch(error => {
+      console.error(`Error fetching ${object} images:`, error);
+      appendMessage("bot", `Failed to fetch ${object} images.`);
+    });
+}
+
+// Function to load more images for the current object
+function loadMoreImages(object) {
+  currentPage++;
+  generateObjectImages(object);
+}
+
+// Function to append message to chat container
+// Function to append message to chat container
+// Function to append message to chat container
 function appendMessage(sender, message) {
   var chatContainer = document.getElementById("chat");
   var messageElement = document.createElement("div");
   messageElement.classList.add(sender);
-  messageElement.innerHTML = message;
-
+  
+  // Add sender icon and CSS class based on sender
+  var senderIcon = document.createElement("div");
+  senderIcon.classList.add("icon-circle");
   if (sender === "bot") {
+    senderIcon.innerHTML = '<i class="fas fa-robot"></i>';
+    messageElement.classList.add("bot-message");
+  } else if (sender === "user") {
+    senderIcon.innerHTML = '<i class="fas fa-user"></i>';
+    messageElement.classList.add("user-message");
+  }
+
+  messageElement.appendChild(senderIcon);
+
+  // Add message content
+  var messageContent = document.createElement("div");
+  messageContent.classList.add("message-content");
+  messageContent.innerHTML = message;
+  messageElement.appendChild(messageContent);
+
+  // Add read out loud button for bot messages
+  if (sender === "bot" && !message.includes("<img")) {
     var readoutButton = document.createElement("button");
     readoutButton.innerHTML = '<i class="fas fa-volume-up"></i>';
     readoutButton.classList.add("readout-button");
     readoutButton.onclick = function() {
-        toggleReadOutLoud(message);
+      toggleReadOutLoud(message);
     };
     messageElement.appendChild(readoutButton);
-  }
 
-  if (sender === "user") {
-    var editPromptButton = document.createElement("button");
-    editPromptButton.innerHTML = '<i class="fas fa-edit"></i>';
-    editPromptButton.classList.add("edit-prompt-button");
-    var userIcon = document.createElement("div");
-    userIcon.classList.add("icon-circle");
-    userIcon.innerHTML = '<i class="fas fa-user"></i>';
-    messageElement.insertBefore(userIcon, messageElement.firstChild);
-    editPromptButton.onclick = function() {
-        editPrompt(message);
-    };
-    messageElement.appendChild(editPromptButton);
-  }
-
-  if (sender === "bot") {
+    // Add copy button for bot messages (optional)
     var copyButton = document.createElement("button");
     copyButton.innerHTML = '<i class="far fa-copy"></i>';
     copyButton.classList.add("copy-button");
-    var botIcon = document.createElement("div");
-    botIcon.classList.add("icon-circle");
-    botIcon.innerHTML = '<i class="fas fa-robot"></i>';
-    messageElement.insertBefore(botIcon, messageElement.firstChild);
     copyButton.onclick = function() {
-        copyToClipboard(message);
+      copyToClipboard(message);
     };
     messageElement.appendChild(copyButton);
   }
@@ -129,6 +200,8 @@ function appendMessage(sender, message) {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
+
+// Function to search Wikipedia for user query
 function searchWikipedia(query) {
   const url = `https://en.wikipedia.org/w/api.php?action=query&format=json&prop=extracts&exintro&explaintext&redirects=1&titles=${query}&origin=*`;
 
@@ -157,6 +230,7 @@ function searchWikipedia(query) {
     });
 }
 
+// Function to toggle read out loud of bot response
 let isReading = false;
 let currentUtterance = null;
 
@@ -172,10 +246,7 @@ function toggleReadOutLoud(message) {
   }
 }
 
-function editPrompt(message) {
-  document.getElementById("user-input").value = message;
-}
-
+// Function to copy bot response to clipboard
 function copyToClipboard(message) {
   navigator.clipboard.writeText(message)
     .then(() => {
@@ -185,3 +256,18 @@ function copyToClipboard(message) {
       console.error('Failed to copy bot response: ', err);
     });
 }
+
+// Event listener to handle Enter key press
+document.getElementById("user-input").addEventListener("keydown", function(event) {
+  if (event.key === "Enter") {
+    event.preventDefault();
+    sendMessage();
+  }
+});
+
+
+
+
+
+
+AIzaSyAlG__SvxD-2j8hdxFmvaJrcarqtFprPU8

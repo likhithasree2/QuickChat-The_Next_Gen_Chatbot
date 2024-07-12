@@ -264,10 +264,3 @@ document.getElementById("user-input").addEventListener("keydown", function(event
     sendMessage();
   }
 });
-
-
-
-
-
-
-AIzaSyAlG__SvxD-2j8hdxFmvaJrcarqtFprPU8

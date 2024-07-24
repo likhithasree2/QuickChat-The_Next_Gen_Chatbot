@@ -3,15 +3,34 @@
 This is a simple modern chatbot project that allows users to interact with a chat interface, toggle dark mode, send messages, and upload images.
 
 ## Features
-
-- Chat Interface: Users can send messages and view responses in a chat-style interface.
-- Dark Mode: Users can toggle between light and dark modes for better readability.
-- Voice Recognition: Users can use voice input to send messages.
-- Image Upload: Users can upload images directly into the chat interface.
-- User and Bot Icons: Messages now display user and bot icons for easier identification.
-- Message Editing: Users can edit their messages after sending them for correction or modification.
-- Readout Option: Bot responses can be read aloud using the built-in text-to-speech feature.
-- Copy Bot Response: Users can copy bot responses to the clipboard for easy sharing or reference.
+- User Interface
+Responsive Design: Adapts the layout for optimal viewing on various devices.
+Dark Mode: Allows users to switch between light and dark themes.
+Custom Icons: Enhances the visual appeal and usability with Font Awesome icons.
+User Interaction
+Text & Voice Input: Enables users to interact with the chatbot by typing or speaking.
+File Upload & Text Extraction: Users can upload files, and the chatbot extracts and analyzes the text.
+Chatbot Capabilities
+Enhanced NLP with Gemini API: Provides accurate and context-aware responses.
+Summarization & Q&A: Summarizes text from files and answers related questions.
+Joke Telling: Offers jokes to entertain users.
+Current Time Display: Shows the current local time upon request.
+Media Handling
+Image Generation: Retrieves and displays images using the Unsplash API.
+Video Generation: Fetches and displays videos using the Pexels API.
+Load More Option: Allows users to request more images or videos.
+Audio Features
+Text-to-Speech: Converts chatbot responses into speech for auditory feedback.
+Voice Input: Users can give commands or ask questions using their voice.
+Utility Features
+Message Editing: Allows users to modify their messages after sending.
+Copy Response: Enables users to easily copy responses from the chatbot.
+Prompt Editing: Users can refine their questions or commands for better responses.
+Backend and Integration
+Flask Server: Handles routing and API interactions securely.
+CORS Support: Ensures secure communication between the frontend and backend.
+Customization
+Theme/Mode Toggle: Users can switch between different themes for a personalized experience.
 
 ## Technologies Used
 

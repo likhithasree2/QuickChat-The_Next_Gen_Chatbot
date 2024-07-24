@@ -4,36 +4,33 @@ This is a simple modern chatbot project that allows users to interact with a cha
 
 ## Features
 - User Interface
-Responsive Design: Adapts the layout for optimal viewing on various devices.
-
-Dark Mode: Allows users to switch between light and dark themes.
-
-Custom Icons: Enhances the visual appeal and usability with Font Awesome icons.
-
+1. Responsive Design: Adapts the layout for optimal viewing on various devices.
+2. Dark Mode: Allows users to switch between light and dark themes.
+3. Custom Icons: Enhances the visual appeal and usability with Font Awesome icons.
 - User Interaction
-Text & Voice Input: Enables users to interact with the chatbot by typing or speaking.
-File Upload & Text Extraction: Users can upload files, and the chatbot extracts and analyzes the text.
+1. Text & Voice Input: Enables users to interact with the chatbot by typing or speaking.
+2. File Upload & Text Extraction: Users can upload files, and the chatbot extracts and analyzes the text.
 - Chatbot Capabilities
-Enhanced NLP with Gemini API: Provides accurate and context-aware responses.
-Summarization & Q&A: Summarizes text from files and answers related questions.
-Joke Telling: Offers jokes to entertain users.
-Current Time Display: Shows the current local time upon request.
+1. Enhanced NLP with Gemini API: Provides accurate and context-aware responses.
+2. Summarization & Q&A: Summarizes text from files and answers related questions.
+3. Joke Telling: Offers jokes to entertain users.
+4. Current Time Display: Shows the current local time upon request.
 - Media Handling
-Image Generation: Retrieves and displays images using the Unsplash API.
-Video Generation: Fetches and displays videos using the Pexels API.
-Load More Option: Allows users to request more images or videos.
+1. Image Generation: Retrieves and displays images using the Unsplash API.
+2. Video Generation: Fetches and displays videos using the Pexels API.
+3. Load More Option: Allows users to request more images or videos.
 - Audio Features
-Text-to-Speech: Converts chatbot responses into speech for auditory feedback.
-Voice Input: Users can give commands or ask questions using their voice.
+1. Text-to-Speech: Converts chatbot responses into speech for auditory feedback.
+2. Voice Input: Users can give commands or ask questions using their voice.
 - Utility Features
-Message Editing: Allows users to modify their messages after sending.
-Copy Response: Enables users to copy responses from the chatbot easily.
-Prompt Editing: Users can refine their questions or commands for better responses.
+1. Message Editing: Allows users to modify their messages after sending.
+2. Copy Response: Enables users to copy responses from the chatbot easily.
+3. Prompt Editing: Users can refine their questions or commands for better responses.
 - Backend and Integration
-Flask Server: Handles routing and API interactions securely.
-CORS Support: Ensures secure communication between the front-end and back-end.
+1. Flask Server: Handles routing and API interactions securely.
+2. CORS Support: Ensures secure communication between the front-end and back-end.
 - Customization
-Theme/Mode Toggle: Users can choose different themes for a personalized experience.
+1. Theme/Mode Toggle: Users can choose different themes for a personalized experience.
 
 ## Technologies Used
 
